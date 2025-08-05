@@ -1,6 +1,5 @@
 // import 'dart:html';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
 
@@ -22,6 +21,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -29,7 +29,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   RulerPickerController? _rulerPickerController;
 
-  num currentValue = 40;
+  num currentValue = 16.2;
 
   List<RulerRange> ranges = const [
     RulerRange(begin: 0, end: 10, scale: 0.1),
@@ -91,28 +91,21 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Text(
               currentValue.toStringAsFixed(1),
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 80),
+              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 80),
             ),
             const SizedBox(height: 50),
             RulerPicker(
+              initValue: 15.2,
               controller: _rulerPickerController!,
               onBuildRulerScaleText: (index, value) {
-                return value.toInt().toString();
+                return '${value.toStringAsFixed(1)} kg';
               },
-              ranges: ranges,
-
+              ranges: const [RulerRange(begin: 5, end: 300, scale: 0.1)],
               scaleLineStyleList: const [
-                ScaleLineStyle(
-                    color: Colors.grey, width: 1.5, height: 30, scale: 0),
-                ScaleLineStyle(
-                    color: Colors.grey, width: 1, height: 25, scale: 5),
-                ScaleLineStyle(
-                    color: Colors.grey, width: 1, height: 15, scale: -1)
+                ScaleLineStyle(color: Colors.grey, width: 0.5, height: 50, scale: 0),
+                ScaleLineStyle(color: Colors.grey, width: 0.5, height: 35, scale: 5),
+                ScaleLineStyle(color: Colors.grey, width: 0.5, height: 35, scale: -1)
               ],
-
               onValueChanged: (value) {
                 setState(() {
                   currentValue = value;
@@ -120,44 +113,11 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               width: MediaQuery.of(context).size.width,
               height: 80,
-              rulerMarginTop: 8,
-              // marker: Container(
-              //     width: 8,
-              //     height: 50,
-              //     decoration: BoxDecoration(
-              //         color: Colors.red.withAlpha(100),
-              //         borderRadius: BorderRadius.circular(5))),
+              marker: Container(
+                  width: 1,
+                  height: 50,
+                  decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(5))),
             ),
-            SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildPositionBtn(8.4),
-                SizedBox(width: 10),
-                _buildPositionBtn(30),
-                SizedBox(width: 10),
-                _buildPositionBtn(50.5),
-                SizedBox(width: 10),
-                _buildPositionBtn(1000),
-                SizedBox(width: 10),
-                _buildPositionBtn(40000),
-                SizedBox(width: 10),
-                _buildPositionBtn(50000),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildChangeRangerBtn("[20,100,1],[100,200,0.1]", [
-                  RulerRange(begin: 20, end: 100, scale: 1),
-                  RulerRange(begin: 100, end: 200, scale: 0.1)
-                ]),
-                SizedBox(width: 10),
-                _buildChangeRangerBtn(
-                    "[100,500]", [RulerRange(begin: 100, end: 500)]),
-              ],
-            )
           ],
         ),
       ),
