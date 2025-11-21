@@ -299,7 +299,7 @@ class RulerPickerState extends State<RulerPicker> {
       }
     }
 
-    rulerScaleValue = index * currentConfig!.scale + currentConfig!.begin;
+    rulerScaleValue = index * currentConfig!.scale + currentConfig.begin;
 
     return rulerScaleValue;
   }
@@ -415,9 +415,11 @@ class RulerPickerState extends State<RulerPicker> {
 
   /// 根据数值设置标记位置
   void setPositionByValue(num value) {
-    double offsetValue = getPositionByValue(value);
-    scrollController.jumpTo(offsetValue);
-    fixOffset();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      double offsetValue = getPositionByValue(value);
+      scrollController.jumpTo(offsetValue);
+      fixOffset();
+    });
   }
 }
 

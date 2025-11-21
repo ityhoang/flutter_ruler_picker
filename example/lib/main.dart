@@ -1,5 +1,7 @@
 // import 'dart:html';
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
 
@@ -30,6 +32,9 @@ class _MyHomePageState extends State<MyHomePage> {
   RulerPickerController? _rulerPickerController;
 
   num currentValue = 16.2;
+
+  final _initData = ValueNotifier(16.2);
+  var isr = false;
 
   List<RulerRange> ranges = const [
     RulerRange(begin: 0, end: 10, scale: 0.1),
@@ -89,34 +94,50 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              currentValue.toStringAsFixed(1),
-              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 80),
+            InkWell(
+              onTap: () {
+                isr = !isr;
+                final weightKg = isr ? _initData.value + 8.2 : _initData.value - 8.2323232;
+
+                final da = (weightKg * pow(10, 1)).round() / pow(10, 1);
+
+                _initData.value = da;
+                _rulerPickerController!.value = da;
+              },
+              child: Text(
+                currentValue.toStringAsFixed(1),
+                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 80),
+              ),
             ),
             const SizedBox(height: 50),
-            RulerPicker(
-              initValue: 15.2,
-              controller: _rulerPickerController!,
-              onBuildRulerScaleText: (index, value) {
-                return '${value.toStringAsFixed(1)} kg';
+            ValueListenableBuilder<double>(
+              valueListenable: _initData,
+              builder: (context, value, child) {
+                return RulerPicker(
+                  initValue: value,
+                  controller: _rulerPickerController!,
+                  onBuildRulerScaleText: (index, value) {
+                    return '${value.toStringAsFixed(1)} kg';
+                  },
+                  ranges: const [RulerRange(begin: 5, end: 300, scale: 0.1)],
+                  scaleLineStyleList: const [
+                    ScaleLineStyle(color: Colors.grey, width: 0.5, height: 50, scale: 0),
+                    ScaleLineStyle(color: Colors.grey, width: 0.5, height: 35, scale: 5),
+                    ScaleLineStyle(color: Colors.grey, width: 0.5, height: 35, scale: -1)
+                  ],
+                  onValueChanged: (value) {
+                    setState(() {
+                      currentValue = value;
+                    });
+                  },
+                  width: MediaQuery.of(context).size.width,
+                  height: 80,
+                  marker: Container(
+                      width: 1,
+                      height: 50,
+                      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(5))),
+                );
               },
-              ranges: const [RulerRange(begin: 5, end: 300, scale: 0.1)],
-              scaleLineStyleList: const [
-                ScaleLineStyle(color: Colors.grey, width: 0.5, height: 50, scale: 0),
-                ScaleLineStyle(color: Colors.grey, width: 0.5, height: 35, scale: 5),
-                ScaleLineStyle(color: Colors.grey, width: 0.5, height: 35, scale: -1)
-              ],
-              onValueChanged: (value) {
-                setState(() {
-                  currentValue = value;
-                });
-              },
-              width: MediaQuery.of(context).size.width,
-              height: 80,
-              marker: Container(
-                  width: 1,
-                  height: 50,
-                  decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(5))),
             ),
           ],
         ),
